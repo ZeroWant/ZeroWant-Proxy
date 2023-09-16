@@ -54,6 +54,9 @@ bool pullauto = false;
 bool setmsg = false;
 std::string message = "";
 std::string mode = "pull";
+bool dropwl = false;
+bool dropdl = false;
+bool dropbgl = false;
 bool events::out::generictext(std::string packet) {
     PRINTS("Generic text: %s\n", packet.c_str());
     auto& world = g_server->m_world;
@@ -185,6 +188,35 @@ bool events::out::generictext(std::string packet) {
        return true;
          }
 
+else if (find_command(chat, "wd ")) {
+        std::string cdropcount = chat.substr(4);
+        dropwl = true;
+        g_server->send(false, "action|drop\n|itemID|242");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        g_server->send(false, "action|dialog_return\ndialog_name|drop_item\nitemID|242|\ncount|" + cdropcount); //242
+        gt::send_log("`9Dropping `c" + cdropcount + "`9 Wl...");
+        return true;
+        }
+
+else if (find_command(chat, "dd ")) {
+        std::string cdropcount = chat.substr(4);
+        dropdl = true;
+        g_server->send(false, "action|drop\n|itemID|1796");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        g_server->send(false, "action|dialog_return\ndialog_name|drop_item\nitemID|1796|\ncount|" + cdropcount); //242
+        gt::send_log("`9Dropping `c" + cdropcount + "`9 Dl...");
+        return true;
+        }
+	
+else if (find_command(chat, "bd ")) {
+        std::string cdropcount = chat.substr(4);
+        dropbgl = true;
+        g_server->send(false, "action|drop\n|itemID|7188");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        g_server->send(false, "action|dialog_return\ndialog_name|drop_item\nitemID|7188|\ncount|" + cdropcount); //242
+        gt::send_log("`9Dropping `c" + cdropcount + "`9 Bgl...");
+        return true;
+        }
         
         else if (find_command(chat, "wrenchset ")) {
             mode = chat.substr(10);
@@ -296,7 +328,7 @@ bool events::out::generictext(std::string packet) {
             }
 
 } else if (find_command(chat, "msgall")) {
-           std::string msgtext = "              Message from FakeModz YT";
+           std::string msgtext = "              Message from ZeroWant";
             std::string username = chat.substr(6);
             for (auto& player : g_server->m_world.players) {
                 auto name_2 = player.name.substr(2); //remove color
@@ -329,31 +361,7 @@ bool events::out::generictext(std::string packet) {
             return true;
 
 
-}else if (find_command(chat, "pinfo")) {
-                   std::string paket;
-            paket =
-                "\nadd_label_with_icon|big|Proxy information|left|20|"
-               "\nadd_image_button|banner|interface/large/special_event.rttex|bannerlayout|||"
-                "\nadd_spacer|small"
-                "\nadd_textbox|`9This Proxy Made by Ama6nen and Re-Edit By FakeModz#1192|left|2480|"
-                "\nadd_textbox|`9Command List for command list please do /phelp|left|2480|"
-                "\nadd_textbox|`9Thanks to :|left|2480|"
-                "\nadd_textbox|`9Gucktube YT|left|2480|"
-                "\nadd_textbox|`9Ama6nen|left|2480|"
-                "\nadd_textbox|`9Genta 7740|left|2480|"
-                "\nadd_textbox|`9BotHax YT|left|2480|"
-                "\nadd_textbox|`9SrMotion|left|2480|"
-                "\nadd_textbox|`9If you Want Re-Edit this proxy please|left|2480|"
-                "\nadd_textbox|`9Dont Edit/Delete The Credits!!!|left|2480|"
-                "\nadd_textbox|`9or you will dieee !!!!!|left|2480|"
-                "\nadd_quick_exit|"
-                "\nend_dialog|end|Cancel|Okay|";
-            variantlist_t liste{ "OnDialogRequest" };
-            liste[1] = paket;
-            g_server->send(true, liste);
-            return true;
-        
-        } else if (find_command(chat, "phelp")) {
+} else if (find_command(chat, "proxy")) {
            // gt::send_log(
             //    "`2/tp [name] (teleports to a player in the world), /ghost (toggles ghost, you wont move for others when its enabled), /uid "
             //    "`2[name] (resolves name to uid), /flag [id] (sets flag to item id), /name [name] (sets name to name), /banall, /kickall, /tradeall"
@@ -362,19 +370,21 @@ bool events::out::generictext(std::string packet) {
             //    "`2/wrenchmsg (Auto Msg Wrench People), /setmsg (for set message text)");
            std::string paket1;
             paket1 =
-                "\nadd_label_with_icon|big|Proxy Commands Gazette|left|20|"
-                "\nadd_image_button|banner|interface/large/news_banner.rttex|bannerlayout|||"
+                "\nadd_label_with_icon|big|`9ZeroWant Proxy Command|left|32|"
                 "\nadd_spacer|small"
-                "\nadd_textbox|`2/tp [name] (teleports to a player in the world)|left|2480|"
+		    "\nadd_textbox|`c/wd [amount] (drop world lock)|left|2480|"
+		    "\nadd_textbox|`c/dd [amount] (drop diamond lock)|left|2480|"
+		    "\nadd_textbox|`c/bd [amount] (drop blue gem lock)|left|2480|"
+                "\nadd_textbox|`1/tp [name] (teleports to a player in the world)|left|2480|"
                 "\nadd_textbox|`2/ghost (toggles ghost, you wont move for others when its enabled)|left|2480|"
-                "\nadd_textbox|`2/uid [name] (resolves name to uid)|left|2480|"
-                "\nadd_textbox|`2/flag [id] (sets flag to item id)|left|2480|"
-                "\nadd_textbox|`2/name [name] (Change Name Visual)|left|2480|"
-                "\nadd_textbox|`2/banall (World Ban All People in world)|left|2480|"
-                "\nadd_textbox|`2/killall (Kick all People in world)|left|2480|"
-                "\nadd_textbox|`2/tradeall (trade all people in the world|left|2480|"
-                "\nadd_textbox|`2/warp [world name] (warping world without SSUP)|left|2480|"
-                "\nadd_textbox|`2/skin [Id] (change skin colours)|left|2480|"
+                "\nadd_textbox|`3/uid [name] (resolves name to uid)|left|2480|"
+                "\nadd_textbox|`4/flag [id] (sets flag to item id)|left|2480|"
+                "\nadd_textbox|`5/name [name] (Change Name Visual)|left|2480|"
+                "\nadd_textbox|`6/banall (World Ban All People in world)|left|2480|"
+                "\nadd_textbox|`8/killall (Kick all People in world)|left|2480|"
+                "\nadd_textbox|`9/tradeall (trade all people in the world|left|2480|"
+                "\nadd_textbox|`#/warp [world name] (warping world without SSUP)|left|2480|"
+                "\nadd_textbox|`$/skin [Id] (change skin colours)|left|2480|"
                 "\nadd_textbox|`2/wrenchmode (wrench modefor wrench pull, kick, pull, ban, trade, add)|left|2480|"
                 "\nadd_textbox|`2/wrenchset (for set wrenchmode : pull,kick,ban,trade,add friend)|left|2480|"
                 "\nadd_textbox|`2/ft (fast trash) |left|2480|"
@@ -390,9 +400,6 @@ bool events::out::generictext(std::string packet) {
                 "\nadd_textbox|`2/countrylist (List Country For /country) |left|2480|"
                 "\nadd_textbox|`2/autopull (auto pull when people enter world) |left|2480|"
                 "\nadd_textbox|`2/pullauto (auto pull for casino hoster) |left|2480|"
-                "\nadd_spacer|small|\n\nadd_url_button||`$YouTube``|NOFLAGS|https://youtube.com/c/FakeModzGT|Open link?|0|0|"
-                "\nadd_spacer|small|\n\nadd_url_button||`$Discord``|NOFLAGS|https://discord.com/invite/YfnMbjWjpP|Open link?|0|0|"
-                "\nadd_spacer|small|\n\nadd_url_button||`$INSTAGRAM``|NOFLAGS|https://instagram.com/FakeModz.yt|Open link?|0|0|"
                 "\nadd_quick_exit|"
                 "\nend_dialog|end|Cancel|Okay|";
             variantlist_t liste{ "OnDialogRequest" };
@@ -442,6 +449,7 @@ bool events::out::generictext(std::string packet) {
         gt::in_game = false;
         PRINTS("Spoofing login info\n");
         g_server->send(false, packet);
+	    gt::send_log("`2Logged In `9ZeroWant Proxy\n");
         return true;
     }
 
@@ -494,7 +502,7 @@ bool events::in::variantlist(gameupdatepacket_t* packet) {
         case fnv32("OnSendToServer"): g_server->redirect_server(varlist); return true;
 
         case fnv32("OnConsoleMessage"): {
-            varlist[1] = "`4[PROXY]`` " + varlist[1].get_string();
+            varlist[1] = "`0[`^ZeroWant`0]`w " + varlist[1].get_string();
             auto cnsl = varlist[1].get_string();
           g_server->send(true, varlist);
        return true;
@@ -630,7 +638,25 @@ if (wrenchspam == true) {
     }
 } 
 }
-       
+       if (dropwl == true) {
+            if (content.find("Drop") != -1) {
+                dropwl = false;
+                return true;
+            }
+        }
+        
+        else if (dropdl == true) {
+            if (content.find("Drop") != -1) {
+                dropdl = false;
+                return true;
+            }
+        }
+        else if (dropbgl == true) {
+            if (content.find("Drop") != -1) {
+                dropbgl = false;
+                return true;
+            }
+        }
 
             //hide unneeded ui when resolving
             //for the /uid command
@@ -807,5 +833,55 @@ bool events::in::state(gameupdatepacket_t* packet) {
 
 bool events::in::tracking(std::string packet) {
     PRINTC("Tracking packet: %s\n", packet.c_str());
+	if (packet.find("eventName|102_PLAYER.AUTHENTICATION") != -1)
+    {
+        std::string wlbalance = packet.substr(packet.find("Worldlock_balance|") + 18, packet.length() - packet.find("Worldlock_balance|") - 1);
+
+        if (wlbalance.find("PLAYER.") != -1)
+        {
+            gt::send_log("`9World Lock Balance: `#0");
+        }
+        else
+        {
+            gt::send_log("`9World Lock Balance: `#" + wlbalance);
+
+        }
+        if (packet.find("Authenticated|1") != -1)
+        {
+            gt::send_log("`9Player Authentication `2Successfuly.");
+        }
+        else
+        {
+            gt::send_log("`9Player Authentication `4Failed.");
+        }
+
+    }
+    if (packet.find("eventName|100_MOBILE.START") != -1)
+    {
+        std::string gems = packet.substr(packet.find("Gems_balance|") + 13, packet.length() - packet.find("Gems_balance|") - 1);
+       std::string level = packet.substr(packet.find("Level|") + 6, packet.length() - packet.find("Level|") - 1);
+        std::string uid = packet.substr(packet.find("GrowId|") + 7, packet.length() - packet.find("GrowId|") - 1);
+        gt::send_log("`9Gems Balance: `#" + gems);
+        gt::send_log("`9Account Level: `#" + level);
+        gt::send_log("`9Your Current UID: `#" + uid);
+    }
+    if (packet.find("eventName|300_WORLD_VISIT") != -1)
+    {
+        if (packet.find("Locked|0") != -1)
+        {
+            gt::send_log("`4This world is not locked by a world lock.");
+        }
+        else
+        {
+            gt::send_log("`2This world is locked by a world lock.");
+
+            if (packet.find("World_owner|") != -1)
+            {
+                std::string uidd = packet.substr(packet.find("World_owner|") + 12, packet.length() - packet.find("World_owner|") - 1);
+                gt::send_log("`9World Owner UID: `#" + uidd);
+
+            }
+        }
+    }
     return true;
 }
